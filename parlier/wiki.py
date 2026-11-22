@@ -1,6 +1,6 @@
 """Baut das Hilfe-Wiki aus docs/hilfe mit Quartz (https://quartz.jzhao.xyz).
 
-Vorbereiten: Die Seiten werden in einen Arbeitsordner kopiert. Dabei
+Vorbereiten: Die Seiten werden in einen Arbeitsordner (im Temp-Verzeichnis) kopiert. Dabei
   - wird das Frontmatter der Vault-Konvention (titel, erstellt) auf Quartz übersetzt (title, created),
   - bekommt jede Seite das Änderungsdatum aus Git (modified),
   - bekommt jede Seite unten die Wikipedia-Werkzeuge: Seite bearbeiten, Versionsgeschichte, Diskussion.
@@ -12,13 +12,19 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import tempfile
 from pathlib import Path
 from urllib.parse import quote
 
-from .basis import Abbruch, frontmatter, git, hat_programm, konfig, kuerzen, lauf, melde, wurzel
+from .basis import Abbruch, frontmatter, git, hat_programm, konfig, kuerzen, kurzname, lauf, melde, wurzel
 
-ARBEIT = ".cache/wiki-inhalt"
+# Der vorbereitete Inhalt muss außerhalb des Repos liegen: Quartz beachtet die .gitignore,
+# und .cache/ steht dort drin. Sonst findet Quartz 0 Dateien.
 QUARTZ = ".cache/quartz"
+
+
+def arbeitsordner() -> Path:
+    return Path(tempfile.gettempdir()) / f"bauhuette-wiki-{kurzname(wurzel().name)}"
 QUARTZ_REPO = "https://github.com/jackyzha0/quartz.git"
 
 
@@ -60,7 +66,7 @@ def vorbereiten(zweig: str | None = None) -> Path:
     quelle = wurzel() / k["wiki"]["quelle"]
     if not quelle.exists():
         raise Abbruch(f"Wiki-Quelle fehlt: {quelle}")
-    ziel = wurzel() / ARBEIT
+    ziel = arbeitsordner()
     shutil.rmtree(ziel, ignore_errors=True)
     repo = k["projekt"].get("repo", "")
     zweig = zweig or os.environ.get("GITHUB_REF_NAME") or k["zweige"]["sammel"]
@@ -78,7 +84,7 @@ def vorbereiten(zweig: str | None = None) -> Path:
         geaendert = git("log", "-1", "--format=%cs", "--", quellpfad, pruefen=False) or None
         neu.write_text(seite_umschreiben(datei.read_text(encoding="utf-8"), quellpfad, repo, zweig, geaendert), encoding="utf-8")
         anzahl += 1
-    melde(f"Wiki vorbereitet: {anzahl} Seiten in {ARBEIT}")
+    melde(f"Wiki vorbereitet: {anzahl} Seiten in {ziel}")
     return ziel
 
 
