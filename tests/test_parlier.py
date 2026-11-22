@@ -55,6 +55,15 @@ class Basis(unittest.TestCase):
             self.assertTrue(k["label"])
 
 
+class Befehlszeile(unittest.TestCase):
+    def test_label_entfernen_mit_minus(self):
+        from parlier.cli import _parser
+
+        for argv, erwartet in ((["issue", "9", "label", "+in-review", "-in-arbeit"], ["+in-review", "-in-arbeit"]),
+                               (["issue", "9", "label", "-in-arbeit"], ["-in-arbeit"])):
+            self.assertEqual(_parser().parse_args(argv).werte, erwartet)
+
+
 class IssueNeu(unittest.TestCase):
     def test_neu_ueber_rest(self):
         from unittest import mock
@@ -75,6 +84,22 @@ class IssueNeu(unittest.TestCase):
         self.assertIn("labels[]=prd", argumente)
         self.assertIn("labels[]=mensch", argumente)
         self.assertEqual(eingabe, "Fragen kommen als Kommentare.")
+
+    def test_labels_und_kommentar_ueber_rest(self):
+        from unittest import mock
+
+        aufrufe = []
+
+        def falsches_gh(*argumente, eingabe=None, als_json=False):
+            aufrufe.append(argumente)
+            return ""
+
+        with ImOrdner(), mock.patch.object(issues, "gh", falsches_gh):
+            issues.labels_aendern(9, hinzu=["in-review"], weg=["in-arbeit"])
+            issues.kommentieren(9, "Frage 1")
+        self.assertIn(("api", "-X", "POST", "repos/DexBrox/web-bauhuette/issues/9/labels", "-f", "labels[]=in-review"), aufrufe)
+        self.assertIn(("api", "-X", "DELETE", "repos/DexBrox/web-bauhuette/issues/9/labels/in-arbeit"), aufrufe)
+        self.assertEqual(aufrufe[-1][:2], ("api", "repos/DexBrox/web-bauhuette/issues/9/comments"))
 
 
 class Issues(unittest.TestCase):

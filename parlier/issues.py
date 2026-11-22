@@ -228,19 +228,27 @@ def neu(titel: str, labels: list[str] = (), text: str = "") -> int:
 
 
 def labels_aendern(nummer: int, hinzu: list[str] = (), weg: list[str] = ()) -> None:
-    argumente = ["issue", "edit", str(nummer)]
-    for l in hinzu:
-        argumente += ["--add-label", l]
+    """Über die REST-API, damit es auch klappt, wo GraphQL gesperrt ist."""
+    from urllib.parse import quote
+
+    pfad = f"repos/{konfig()['projekt']['repo']}/issues/{nummer}/labels"
+    if hinzu:
+        argumente = ["api", "-X", "POST", pfad]
+        for l in hinzu:
+            argumente += ["-f", f"labels[]={l}"]
+        try:
+            gh(*argumente)
+        except Abbruch as fehler:
+            warne(f"Labels an #{nummer} nicht gesetzt: {fehler}")
     for l in weg:
-        argumente += ["--remove-label", l]
-    try:
-        gh(*argumente)
-    except Abbruch as fehler:
-        warne(f"Labels an #{nummer} nicht geändert: {fehler}")
+        try:
+            gh("api", "-X", "DELETE", f"{pfad}/{quote(l)}")
+        except Abbruch:
+            pass  # Label war nicht gesetzt
 
 
 def kommentieren(nummer: int, text: str) -> None:
     try:
-        gh("issue", "comment", str(nummer), "--body-file", "-", eingabe=text)
+        gh("api", f"repos/{konfig()['projekt']['repo']}/issues/{nummer}/comments", "-F", "body=@-", "--silent", eingabe=text)
     except Abbruch as fehler:
         warne(f"Kommentar an #{nummer} fehlgeschlagen: {fehler}")

@@ -81,7 +81,8 @@ def _parser() -> argparse.ArgumentParser:
     i.add_argument("--zweig", action="store_true")
     i.add_argument("--fix", action="store_true")
 
-    e = s.add_parser("issue")
+    # Kein Optionspräfix, damit "-label" als Wert ankommt (issue 9 label +a -b).
+    e = s.add_parser("issue", prefix_chars="\x00", add_help=False)
     e.add_argument("nummer", type=int)
     e.add_argument("aktion", choices=["label", "kommentar"])
     e.add_argument("werte", nargs="+")

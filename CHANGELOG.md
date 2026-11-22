@@ -12,7 +12,10 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 
 ### Geändert
 - Ohne Issue keine Arbeit: Hüttenordnung und Skills beginnen jede Phase mit einem Issue, `parlier zweig` und `parlier commit` lehnen Arbeit ohne Issue-Nummer ab.
-- `parlier pr` weicht auf die REST-API aus, wenn GraphQL gesperrt ist (Cloud-Sitzungen).
+- `parlier pr` weicht auf die REST-API aus, wenn GraphQL gesperrt ist (Cloud-Sitzungen). Labels und Kommentare laufen immer über REST.
+
+### Behoben
+- `parlier issue <nr> label -name` entfernt Labels wieder, vorher hielt die Befehlszeile das Minus für eine Option.
 - `parlier einrichten` lässt das Profil offen und beginnt ein frisches CHANGELOG für das neue Projekt.
 - Namensschema für Projekte: `web-<projekt>`, die Vorlage heißt jetzt `web-bauhuette`.
 
