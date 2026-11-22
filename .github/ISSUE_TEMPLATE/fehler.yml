@@ -1,0 +1,28 @@
+name: Fehler
+description: Etwas auf der Webseite funktioniert nicht oder sieht falsch aus.
+title: "[Fehler] "
+labels: ["fehler"]
+body:
+  - type: input
+    id: adresse
+    attributes:
+      label: Wo? (Adresse der Seite)
+    validations:
+      required: true
+  - type: textarea
+    id: was
+    attributes:
+      label: Was passiert, was sollte passieren?
+      description: Screenshot hilft sehr.
+    validations:
+      required: true
+  - type: dropdown
+    id: geraet
+    attributes:
+      label: Gerät
+      options: [Computer, Handy, Tablet, weiß nicht]
+  - type: input
+    id: browser
+    attributes:
+      label: Browser (freiwillig)
+      placeholder: z. B. Chrome, Safari, Firefox

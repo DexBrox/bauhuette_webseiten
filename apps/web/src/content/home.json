@@ -1,0 +1,11 @@
+{
+  "title": "Bauhütte Webseiten",
+  "description": "Vorlage für Webseiten, gebaut mit dem Workflow der Bauhütte.",
+  "sections": [
+    {
+      "id": "willkommen",
+      "heading": "Diese Seite ist ein Gerüst",
+      "text": "Hier entsteht die Webseite. Der Ablauf beginnt mit dem Interview: /interview in Claude Code."
+    }
+  ]
+}

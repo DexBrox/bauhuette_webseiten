@@ -1,0 +1,25 @@
+// Eigene Stile des Hilfe-Wikis. Wird nach .cache/quartz/quartz/styles/custom.scss kopiert.
+@use "./variables.scss" as *;
+
+// Wikipedia-Werkzeuge unten auf jeder Seite (von parlier eingefügt)
+.seitenwerkzeuge {
+  font-size: 0.9rem;
+  color: var(--gray);
+
+  a {
+    color: var(--secondary);
+  }
+}
+
+// Infokasten rechts neben dem Text wie bei Wikipedia: > [!infobox] Titel
+.callout[data-callout="infobox"] {
+  float: right;
+  max-width: 18rem;
+  margin: 0 0 1rem 1.5rem;
+
+  @media (max-width: 800px) {
+    float: none;
+    max-width: none;
+    margin: 1rem 0;
+  }
+}

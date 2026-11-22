@@ -1,0 +1,9 @@
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm führt Installationsskripte nur für diese Pakete aus (Sicherheit)
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

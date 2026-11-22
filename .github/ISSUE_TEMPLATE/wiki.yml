@@ -1,0 +1,11 @@
+name: Wiki-Diskussion
+description: Frage, Fehler oder Vorschlag zu einer Seite der Hilfe.
+title: "[Wiki] "
+labels: ["inhalt"]
+body:
+  - type: textarea
+    id: was
+    attributes:
+      label: Was ist unklar, falsch oder fehlt?
+    validations:
+      required: true

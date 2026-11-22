@@ -1,0 +1,136 @@
+name: "Vorschau: github.io"
+
+# Jeder Push auf einen anderen Zweig als main baut eine Testseite auf GitHub Pages:
+#   develop          https://<konto>.github.io/<repo>/
+#   andere Zweige    https://<konto>.github.io/<repo>/zweig/<name>/   (feature/12-karte -> feature-12-karte)
+#   Übersicht        https://<konto>.github.io/<repo>/zweig/
+# Vorher werden die aktuellen Inhalte von main dazugenommen (Redaktion). Testseiten sind für
+# Suchmaschinen gesperrt und tragen ein Schild "Vorschau". Alle liegen im Zweig vorschau-ablage.
+# Gelöschte Zweige räumen ihre Testseite selbst ab. Gibt es einen offenen PR, kommt der Link als Kommentar.
+
+on:
+  push:
+    branches-ignore: [main, vorschau-ablage, "dependabot/**"]
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: vorschau
+  cancel-in-progress: false
+
+jobs:
+  vorschau:
+    if: >-
+      github.event_name != 'delete' ||
+      (github.event.ref_type == 'branch' && !startsWith(github.event.ref, 'dependabot/') && github.event.ref != 'vorschau-ablage')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Zweig und Pfad bestimmen
+        env:
+          GELOESCHT: ${{ github.event.ref }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "delete" ]; then ZWEIG="$GELOESCHT"; AKTION=entfernen; else ZWEIG="$GITHUB_REF_NAME"; AKTION=einsetzen; fi
+          REPO="${GITHUB_REPOSITORY#*/}"
+          if [ "$ZWEIG" = "develop" ]; then UNTER=""; else
+            UNTER="zweig/$(echo "$ZWEIG" | tr 'A-Z' 'a-z' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)/"; fi
+          {
+            echo "ZWEIG=$ZWEIG"; echo "AKTION=$AKTION"; echo "UNTER=$UNTER"
+            echo "BASE_PATH=/$REPO/$UNTER"
+            echo "SITE_URL=https://${GITHUB_REPOSITORY_OWNER,,}.github.io"
+          } >> "$GITHUB_ENV"
+
+      - name: Aktuelle Inhalte von main dazunehmen
+        if: env.AKTION == 'einsetzen'
+        run: |
+          git config user.name "Vorschau"
+          git config user.email "vorschau@users.noreply.github.com"
+          if ! git merge --no-edit origin/main; then
+            echo "::error::Der Zweig passt nicht mehr zu main (Konflikt). Lokal 'git pull origin main' auf dem Zweig, Konflikt lösen, pushen."
+            exit 1
+          fi
+
+      - name: pnpm einrichten
+        if: env.AKTION == 'einsetzen'
+        uses: pnpm/action-setup@v4
+
+      - name: Node einrichten
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Bauen und prüfen
+        if: env.AKTION == 'einsetzen'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          python3 -m parlier wiki
+          python3 -m parlier links
+          python3 -m parlier vorschau kennzeichnen _site "$ZWEIG"
+
+      - name: Ablage holen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads origin vorschau-ablage >/dev/null; then
+            git clone --quiet --depth 1 --branch vorschau-ablage "$url" ablage
+          else
+            git init --quiet -b vorschau-ablage ablage
+            git -C ablage remote add origin "$url"
+          fi
+
+      - name: Testseite einsetzen oder entfernen
+        run: python3 -m parlier vorschau "$AKTION" "$ZWEIG" ablage --quelle _site
+
+      - name: Ablage sichern
+        run: |
+          cd ablage
+          git config user.name "Vorschau"
+          git config user.email "vorschau@users.noreply.github.com"
+          git checkout --quiet --orphan neu
+          git add -A
+          git commit --quiet -m "Testseiten ($AKTION $ZWEIG)"
+          git push --quiet --force origin neu:vorschau-ablage
+
+      - name: Seite zusammenstellen
+        run: rsync -a --exclude .git ablage/ seite/
+
+      - name: Pages konfigurieren
+        uses: actions/configure-pages@v6
+
+      - name: Seite hochladen
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: seite
+
+      - name: Vorschau veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Link im Pull Request
+        if: env.AKTION == 'einsetzen'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SEITE: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          link="${SEITE}${UNTER}"
+          echo "### Vorschau" >> "$GITHUB_STEP_SUMMARY"
+          echo "Zweig \`$ZWEIG\`: $link (Hilfe: ${link}hilfe/)" >> "$GITHUB_STEP_SUMMARY"
+          pr=$(gh pr list --head "$ZWEIG" --state open --json number --jq '.[0].number' || true)
+          if [ -n "$pr" ] && ! gh pr view "$pr" --json comments --jq '.comments[].body' | grep -q "<!-- vorschau -->"; then
+            gh pr comment "$pr" --body "<!-- vorschau -->Testseite: $link · Hilfe: ${link}hilfe/ (aktualisiert sich bei jedem Push)"
+          fi

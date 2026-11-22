@@ -1,0 +1,214 @@
+# Konfiguration des Hilfe-Wikis (Quartz 5). parlier kopiert sie beim Bauen nach .cache/quartz.
+# Doku: https://quartz.jzhao.xyz/configuration
+# Bewusst: keine Google Fonts, keine Analyse, keine externen Dienste (DSGVO, kein Cookie-Banner nötig).
+configuration:
+  pageTitle: "Hilfe Bauhütte Webseiten"
+  pageTitleSuffix: " | Hilfe"
+  enableSPA: true
+  enablePopovers: true
+  prefetch: viewport
+  analytics: null
+  locale: de-DE
+  baseUrl: localhost/hilfe
+  ignorePatterns:
+    - private
+    - templates
+    - .obsidian
+  theme:
+    fontOrigin: local
+    cdnCaching: false
+    typography:
+      header: system-ui
+      body: system-ui
+      code: ui-monospace
+    colors:
+      lightMode:
+        light: "#fbfaf7"
+        lightgray: "#e3e1da"
+        gray: "#b4b1a6"
+        darkgray: "#3a3f3b"
+        dark: "#1f2421"
+        secondary: "#3d5a2a"
+        tertiary: "#7a9a5e"
+        highlight: rgba(61, 90, 42, 0.10)
+        textHighlight: "#fff23688"
+      darkMode:
+        light: "#161816"
+        lightgray: "#353935"
+        gray: "#646a64"
+        darkgray: "#d6d9d4"
+        dark: "#eef0ec"
+        secondary: "#9cc27d"
+        tertiary: "#7a9a5e"
+        highlight: rgba(156, 194, 125, 0.12)
+        textHighlight: "#b3aa0288"
+  links:
+    markdownLinkResolution: shortest
+  contentIndex:
+    enableSiteMap: true
+    enableRSS: false
+plugins:
+  - source: "@quartz-community/created-modified-date"
+    enabled: true
+    options:
+      defaultDateType: modified
+      priority:
+        - frontmatter
+        - git
+        - filesystem
+    order: 10
+  - source: "@quartz-community/syntax-highlighting"
+    enabled: true
+    options:
+      theme:
+        light: github-light
+        dark: github-dark
+      keepBackground: false
+    order: 20
+  - source: "@quartz-community/github-flavored-markdown"
+    enabled: true
+    order: 30
+  - source: "@quartz-community/obsidian-flavored-markdown"
+    enabled: true
+    options:
+      enableInHtmlEmbed: false
+      enableCheckbox: true
+    order: 40
+  # Inhaltsverzeichnis rechts, wie bei Wikipedia
+  - source: "@quartz-community/table-of-contents"
+    enabled: true
+    order: 50
+    layout:
+      position: right
+      priority: 30
+  - source: "@quartz-community/description"
+    enabled: true
+    order: 70
+  - source: "@quartz-community/latex"
+    enabled: false
+    order: 80
+  - source: "@quartz-community/alias-redirects"
+    enabled: true
+  - source: "@quartz-community/favicon"
+    enabled: true
+  - source: "@quartz-community/og-image"
+    enabled: false
+  - source: "@quartz-community/cname"
+    enabled: false
+  - source: "@quartz-community/content-page"
+    enabled: true
+  - source: "@quartz-community/folder-page"
+    enabled: true
+  # Kategorien: jedes Tag bekommt eine Übersichtsseite unter tags/
+  - source: "@quartz-community/tag-page"
+    enabled: true
+  - source: "@quartz-community/explorer"
+    enabled: true
+    layout:
+      position: left
+      priority: 50
+  - source: "@quartz-community/search"
+    enabled: true
+    layout:
+      position: left
+      priority: 20
+      group: toolbar
+      groupOptions:
+        grow: true
+  # "Links auf diese Seite"
+  - source: "@quartz-community/backlinks"
+    enabled: true
+    layout:
+      position: right
+      priority: 50
+  - source: "@quartz-community/graph"
+    enabled: true
+    layout:
+      position: right
+      priority: 60
+  - source: "@quartz-community/article-title"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 10
+  - source: "@quartz-community/content-meta"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 20
+  # Kategorien direkt unter dem Titel
+  - source: "@quartz-community/tag-list"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 30
+      condition: has-tags
+  - source: "@quartz-community/page-title"
+    enabled: true
+    layout:
+      position: left
+      priority: 10
+  - source: "@quartz-community/darkmode"
+    enabled: true
+    layout:
+      position: left
+      priority: 30
+      group: toolbar
+  - source: "@quartz-community/reader-mode"
+    enabled: true
+    layout:
+      position: left
+      priority: 35
+      group: toolbar
+  - source: "@quartz-community/breadcrumbs"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 5
+      condition: not-index
+  - source: "@quartz-community/footer"
+    enabled: true
+    options:
+      # parlier setzt hier beim Bauen "Zur Webseite" ein, sobald in bauhuette.toml eine domain steht
+      links: {}
+      message: "Seiten bearbeiten, Versionsgeschichte und Diskussion stehen unten auf jeder Seite."
+    layout:
+      position: footer
+      priority: 50
+  - source: "@quartz-community/spacer"
+    enabled: true
+    options: {}
+    order: 25
+    layout:
+      position: left
+      priority: 25
+      display: mobile-only
+  - source: "@quartz-community/note-properties"
+    enabled: false
+  - source: "@quartz-community/unlisted-pages"
+    enabled: true
+    options: {}
+    order: 45
+layout:
+  groups:
+    toolbar:
+      priority: 35
+      direction: row
+      gap: 0.5rem
+  byPageType:
+    "404":
+      positions:
+        beforeBody: []
+        left: []
+        right: []
+    content: {}
+    folder:
+      exclude:
+        - reader-mode
+      positions:
+        right: []
+    tag:
+      exclude:
+        - reader-mode
+      positions:
+        right: []

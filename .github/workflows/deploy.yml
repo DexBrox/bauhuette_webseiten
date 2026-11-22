@@ -1,0 +1,101 @@
+name: "Live: Server"
+
+# Jeder Push auf main geht live: Redaktion und zusammengeführte Releases.
+# Webseite und Wiki: per SFTP auf den vorhandenen Server (wie bei Kulturland Hohenlohe).
+# API (nur Profil fullstack): per wrangler auf Cloudflare Workers.
+#
+# Secrets (Settings, Secrets and variables, Actions):
+#   SFTP_HOST, SFTP_USER, SFTP_PASSWORD, SFTP_PFAD (z. B. public_html), optional SFTP_PORT (Standard 22)
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (nur fullstack)
+# Variable SERVER_ABGLEICH = ja: löscht auf dem Server Dateien, die nicht mehr zur Seite gehören.
+# Ohne SFTP_HOST wird nur gebaut und geprüft.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    env:
+      HAT_SFTP: ${{ secrets.SFTP_HOST != '' }}
+      HAT_CLOUDFLARE: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Einstellungen lesen
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_ENV"
+          import tomllib
+          p = tomllib.load(open("bauhuette.toml", "rb"))["projekt"]
+          print(f"PROFIL={p['profil']}")
+          print(f"SITE_URL=https://{p['domain']}" if p["domain"] else "SITE_URL=http://localhost")
+          EOF
+
+      - name: pnpm einrichten
+        uses: pnpm/action-setup@v4
+
+      - name: Node einrichten
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Bauen und prüfen (Fehler stoppen den Upload)
+        run: |
+          pnpm install --frozen-lockfile
+          python3 -m parlier pruefen voll
+          python3 -m parlier wiki
+          python3 -m parlier links
+
+      - name: Auf den Server laden (SFTP)
+        if: env.HAT_SFTP == 'true'
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_PFAD: ${{ secrets.SFTP_PFAD }}
+          SERVER_ABGLEICH: ${{ vars.SERVER_ABGLEICH }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp > /dev/null
+          AUSNAHMEN="-x '^\.well-known/' -x '^cgi-bin/' -x 'error_log$' -x '^\.user\.ini$' -x '^php\.ini$' -x '^\.ftpquota$'"
+          verbinden() {
+            lftp --env-password -u "$SFTP_USER" -p "${SFTP_PORT:-22}" "sftp://$SFTP_HOST" -e "
+              set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 30; $1; bye"
+          }
+          if [ "$SERVER_ABGLEICH" = "ja" ]; then
+            verbinden "mirror --reverse --verbose --parallel=4 --delete $AUSNAHMEN _site '${SFTP_PFAD:-.}'"
+          else
+            verbinden "mirror --reverse --verbose --parallel=4 _site '${SFTP_PFAD:-.}'"
+            verbinden "mirror --reverse --dry-run --delete $AUSNAHMEN _site '${SFTP_PFAD:-.}'" | tee trockenlauf.txt || true
+            {
+              echo "### Server-Abgleich (Trockenlauf)"
+              echo "Mit SERVER_ABGLEICH = ja würden diese Dateien gelöscht:"
+              echo '```'
+              grep -E '^(rm|rmdir) ' trockenlauf.txt | sed -E 's#sftp://[^/]+/##' || echo "(nichts)"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: API veröffentlichen (Cloudflare Workers)
+        if: env.PROFIL == 'fullstack' && env.HAT_CLOUDFLARE == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm --filter api deploy
+
+      - name: Zusammenfassung
+        run: |
+          echo "### Live: Stand \`${GITHUB_SHA::7}\` auf $SITE_URL (Profil $PROFIL)" >> "$GITHUB_STEP_SUMMARY"
