@@ -5,8 +5,7 @@ erstellt: 2026-11-22
 tags: [hilfe, mitmachen]
 ---
 
-Jeder Wunsch und jeder Fehler wird ein **Issue**, also ein Eintrag in der gemeinsamen Liste auf GitHub.
-So geht nichts in Mails verloren und jeder sieht, was gerade passiert.
+Jeder Wunsch und jeder Fehler wird ein **Issue**, also ein Eintrag in der gemeinsamen Liste auf GitHub. So geht nichts in Mails verloren und jeder sieht, was gerade passiert.
 
 ## So geht es
 

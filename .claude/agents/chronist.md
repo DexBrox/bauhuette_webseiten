@@ -18,6 +18,7 @@ Kalenderdatei laden. (#12)` Keine Dateinamen, außer sie helfen beim Verstehen.
 - Frontmatter `titel`, `typ: wiki`, `erstellt`, `tags` (Kategorien). Am Ende `## Verbunden` mit `[[Links]]`.
 - Neue Seiten von mindestens einer bestehenden Seite aus verlinken, sonst findet sie niemand.
 - Kurz, konkret, Schritt für Schritt. Keine Gedankenstriche.
+- Jeder Absatz in einer Zeile: Quartz übernimmt Zeilenumbrüche wie Obsidian.
 
 ## Technik-Doku (docs/technik)
 Nur ergänzen, wenn sich Betrieb oder Zusammenarbeit ändert. Architektur und ADRs schreibt der Baumeister.

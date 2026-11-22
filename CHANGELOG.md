@@ -16,3 +16,8 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 - Workflows: Prüfung je Pull Request, Testseite je Zweig, Livegang per SFTP, Release aus dem CHANGELOG,
   Label fertig bei develop, Claude in Issues, Überwachung der Live-Seite, Labels, Dependabot.
 - Sandbox-Container für Ralph.
+
+### Behoben
+- Testseiten werden wieder veröffentlicht: Bauen und Veröffentlichen laufen in zwei Jobs. (#2)
+- parlier commit setzt die Issue-Nummer in die erste Zeile statt ans Ende mehrzeiliger Nachrichten. (#2)
+- Hilfe-Wiki: Absätze brechen nicht mehr mitten im Satz um, toter Link auf die Kategorie Redaktion entfernt. (#2)
