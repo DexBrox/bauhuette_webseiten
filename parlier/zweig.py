@@ -78,8 +78,9 @@ def commit(nachricht: str, issue: int | None = None) -> str | None:
         melde("Nichts zu committen.")
         return None
     issue = issue or issue_aus_zweig(zweig)
-    if issue and f"#{issue}" not in nachricht:
-        nachricht = f"{nachricht} (#{issue})"
+    betreff, _, rest = nachricht.partition("\n")
+    if issue and f"#{issue}" not in betreff:
+        nachricht = f"{betreff} (#{issue})" + (f"\n{rest}" if rest else "")
     git("add", "-A")
     git("commit", "-q", "-m", nachricht)
     kurz = git("rev-parse", "--short", "HEAD")

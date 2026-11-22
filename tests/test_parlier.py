@@ -209,6 +209,15 @@ class Zweige(unittest.TestCase):
             self.assertEqual(basis.git("log", "-1", "--format=%s"), "Seite angelegt (#12)")
             self.assertEqual(zweig.issue_aus_zweig(), 12)
 
+    def test_issue_nummer_in_erster_zeile(self):
+        with ImOrdner(git_init=True) as ort:
+            zweig.zweig_anlegen(7, "Mehrzeilig")
+            (ort / "b.txt").write_text("x")
+            zweig.commit("Betreff\n\nText\n\nCo-Authored-By: X <x@y>")
+            nachricht = basis.git("log", "-1", "--format=%B")
+            self.assertTrue(nachricht.startswith("Betreff (#7)\n"))
+            self.assertTrue(nachricht.rstrip().endswith("Co-Authored-By: X <x@y>"))
+
 
 if __name__ == "__main__":
     unittest.main()

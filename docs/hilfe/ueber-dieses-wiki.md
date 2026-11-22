@@ -5,9 +5,7 @@ erstellt: 2026-11-22
 tags: [hilfe, wiki]
 ---
 
-Dieses Wiki ist aufgebaut wie Wikipedia: jede Seite ein Thema, Seiten verlinken sich gegenseitig, Kategorien
-bündeln Seiten. Geschrieben wird es in Markdown im Ordner `docs/hilfe/` des Projekts. Beim Bauen der Webseite
-entsteht daraus diese Hilfe unter `/hilfe/`.
+Dieses Wiki ist aufgebaut wie Wikipedia: jede Seite ein Thema, Seiten verlinken sich gegenseitig, Kategorien bündeln Seiten. Geschrieben wird es in Markdown im Ordner `docs/hilfe/` des Projekts. Beim Bauen der Webseite entsteht daraus diese Hilfe unter `/hilfe/`.
 
 > [!infobox] Wikipedia-Funktionen
 > - **Suche:** oben links
@@ -37,9 +35,9 @@ Text mit Link auf eine andere Seite: [[wunsch-melden]].
 - **Kategorien** sind die `tags`. Jede Kategorie hat automatisch eine Übersichtsseite.
 - **Infokasten** rechts neben dem Text: `> [!infobox] Titel`, darunter Zeilen mit `> `.
 - **Hinweise:** `> [!note]`, `> [!warning]`, `> [!tip]`.
+- **Absätze** in eine Zeile schreiben: Wie in Obsidian wird jeder Zeilenumbruch auch auf der Seite ein Umbruch.
 
-Neue Seiten und Änderungen schreibt meist der Chronist-Agent mit, sobald sich an der Webseite etwas ändert.
-Von Hand geht es über **Seite bearbeiten** unten auf jeder Seite.
+Neue Seiten und Änderungen schreibt meist der Chronist-Agent mit, sobald sich an der Webseite etwas ändert. Von Hand geht es über **Seite bearbeiten** unten auf jeder Seite.
 
 ## Verbunden
 

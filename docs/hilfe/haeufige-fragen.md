@@ -7,8 +7,7 @@ tags: [hilfe, faq]
 
 ### Kann ich etwas kaputt machen?
 
-Nein. Jede Änderung ist gespeichert und lässt sich zurückholen. Vor jedem Livegang prüft eine Automatik
-kaputte Links und fehlende Bilder.
+Nein. Jede Änderung ist gespeichert und lässt sich zurückholen. Vor jedem Livegang prüft eine Automatik kaputte Links und fehlende Bilder.
 
 ### Wann ist meine Änderung online?
 
