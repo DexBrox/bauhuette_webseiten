@@ -31,7 +31,8 @@ Prüfen und Doku:
   status                      Lagebericht und nächster Schritt
 
 Betrieb (Vale):
-  einrichten --name --repo --profil --domain   neues Projekt aus der Vorlage
+  einrichten --name --repo --domain   neues Projekt aus der Vorlage (Profil bleibt offen)
+  profil statisch|fullstack   Profil festlegen (Phase 3), statisch entfernt apps/api
   labels                      Labels aus bauhuette.toml auf GitHub anlegen
   release X.Y.Z [--abschliessen] [--titel T]   Release vorbereiten bzw. abschließen
   release-notiz X.Y.Z [datei] Release-Text aus dem CHANGELOG
@@ -101,6 +102,9 @@ def _parser() -> argparse.ArgumentParser:
 
     s.add_parser("status")
     s.add_parser("labels")
+
+    pr_ = s.add_parser("profil")
+    pr_.add_argument("wert", choices=["statisch", "fullstack"])
 
     ei = s.add_parser("einrichten")
     ei.add_argument("--name")
@@ -203,6 +207,10 @@ def ausfuehren(a: argparse.Namespace) -> int:
         from .einrichten import labels
 
         labels()
+    elif a.befehl == "profil":
+        from .einrichten import profil
+
+        profil(a.wert)
     elif a.befehl == "einrichten":
         from .einrichten import einrichten
 

@@ -18,7 +18,9 @@ Voraussetzung: `docs/projekt/prd.md` mit `status: freigegeben`.
 5. `python3 -m parlier pruefen schnell` (die Schemas müssen kompilieren).
 6. Vale in höchstens 12 Zeilen vorstellen: Bausteine, wichtigste Entscheidungen mit Grund, offene Risiken.
    Erst nach ausdrücklicher Freigabe `status: freigegeben` in `architektur.md` und den ADRs setzen.
-7. `python3 -m parlier commit "Architektur freigegeben"`. Weiter mit `/zerlegen`.
+7. Profil festlegen, wie freigegeben: `python3 -m parlier profil statisch` (entfernt `apps/api`) oder
+   `python3 -m parlier profil fullstack`, danach `pnpm install`, damit `pnpm-lock.yaml` passt.
+8. `python3 -m parlier commit "Architektur freigegeben"`. Weiter mit `/zerlegen`.
 
 Bei Profil `statisch` braucht es kein Datenmodell für eine Datenbank, wohl aber Schemas für die Inhalte,
 weil die Redaktion daraus ihre Felder baut.

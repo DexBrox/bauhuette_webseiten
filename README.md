@@ -7,15 +7,17 @@ damit Claude dafür keine Tokens braucht.
 
 ## Neues Projekt anlegen
 
-1. Auf GitHub **Use this template**, neues privates Repo anlegen, klonen.
+1. Auf GitHub **Use this template**, neues privates Repo nach dem Schema `web-<projekt>` anlegen
+   (z. B. `web-solawi-neuenstein`, `web-kulturland-hohenlohe`), klonen.
 2. Einmal einrichten:
    ```bash
    pnpm install
-   python3 -m parlier einrichten --name "Kulturland Hohenlohe" --repo DexBrox/kulturland --profil statisch --domain kulturland-hohenlohe.de
+   python3 -m parlier einrichten --name "Kulturland Hohenlohe" --repo DexBrox/web-kulturland-hohenlohe --domain kulturland-hohenlohe.de
    git add -A && git commit -m "Projekt eingerichtet" && git push && git push -u origin develop
    ```
-   `einrichten` passt `bauhuette.toml` und das Wiki an, entfernt bei `statisch` die API und aktualisiert
-   `pnpm-lock.yaml`. Deshalb danach einmal committen.
+   `einrichten` passt `bauhuette.toml` und das Wiki an und beginnt ein frisches CHANGELOG. Das Profil
+   (`statisch` oder `fullstack`) bleibt offen, es wird in Phase 3 mit `python3 -m parlier profil statisch`
+   festgelegt.
 3. Auf GitHub: **Settings, Pages, Source: GitHub Actions**, Secrets für den Server eintragen
    ([docs/technik/betrieb.md](docs/technik/betrieb.md)).
 4. Claude Code im Ordner starten und `/interview` eingeben.

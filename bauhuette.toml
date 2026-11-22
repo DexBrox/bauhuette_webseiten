@@ -1,10 +1,10 @@
 # Einstellungen der Bauhütte. Gelesen von parlier (python3 -m parlier).
 # Einmal pro Projekt anpassen, am einfachsten mit:
-#   python3 -m parlier einrichten --name "Mein Projekt" --repo DexBrox/mein-projekt --profil statisch --domain beispiel.de
+#   python3 -m parlier einrichten --name "Mein Projekt" --repo DexBrox/web-mein-projekt --domain beispiel.de
 
 [projekt]
 name = "Bauhütte Webseiten"
-repo = "DexBrox/bauhuette_webseiten"
+repo = "DexBrox/web-bauhuette"
 # statisch: nur Webseite (SFTP). fullstack: zusätzlich API auf Cloudflare Workers mit Neon-Postgres.
 profil = "statisch"
 # Live-Domain ohne https://, z. B. "kulturland-hohenlohe.de". Leer, solange es keine gibt.

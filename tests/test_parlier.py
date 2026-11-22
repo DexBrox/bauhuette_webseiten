@@ -193,6 +193,48 @@ class Vorschau(unittest.TestCase):
             self.assertTrue((ablage / "index.html").exists())
 
 
+class Einrichten(unittest.TestCase):
+    def _vorbereiten(self, ort: Path) -> None:
+        (ort / "apps" / "api").mkdir(parents=True)
+        (ort / "apps" / "api" / "x.ts").write_text("x")
+        (ort / "wiki").mkdir()
+        (ort / "wiki" / "quartz.config.yaml").write_text('configuration:\n  pageTitle: "Hilfe Bauhütte Webseiten"\n  baseUrl: localhost/hilfe\n')
+        (ort / "CHANGELOG.md").write_text("# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-11-22\n\n- Vorlage\n")
+
+    def test_einrichten_laesst_profil_offen(self):
+        from parlier.einrichten import einrichten
+
+        with ImOrdner(git_init=True) as ort:
+            self._vorbereiten(ort)
+            einrichten("Solawi Test", "DexBrox/web-solawi-test", None, None, mit_labels=False, installieren=False)
+            self.assertTrue((ort / "apps" / "api").exists())
+            k = basis.konfig()
+            self.assertEqual(k["projekt"]["name"], "Solawi Test")
+            self.assertEqual(k["projekt"]["repo"], "DexBrox/web-solawi-test")
+            changelog = (ort / "CHANGELOG.md").read_text()
+            self.assertNotIn("0.1.0] - ", changelog)
+            self.assertIn("Projekt aus der Vorlage", changelog)
+            self.assertIn('pageTitle: "Hilfe Solawi Test"', (ort / "wiki" / "quartz.config.yaml").read_text())
+
+    def test_profil_statisch_entfernt_api(self):
+        from parlier.einrichten import profil
+
+        with ImOrdner() as ort:
+            self._vorbereiten(ort)
+            profil("statisch")
+            self.assertFalse((ort / "apps" / "api").exists())
+            self.assertEqual(basis.konfig()["projekt"]["profil"], "statisch")
+
+    def test_profil_fullstack_behaelt_api(self):
+        from parlier.einrichten import profil
+
+        with ImOrdner() as ort:
+            self._vorbereiten(ort)
+            profil("fullstack")
+            self.assertTrue((ort / "apps" / "api").exists())
+            self.assertEqual(basis.konfig()["projekt"]["profil"], "fullstack")
+
+
 class Zweige(unittest.TestCase):
     def test_kein_commit_auf_develop(self):
         with ImOrdner(git_init=True) as ort:
