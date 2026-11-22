@@ -15,7 +15,7 @@ description: Phase 0 der Bauhütte. Verarbeitet Material in eingang/ (Mails, Wor
    | Größerer Wunsch | Issue mit Label `wunsch`, Vorschlag: `/interview` dazu |
    | Material für ein neues Projekt | Zusammenfassung als Startpunkt für `/interview` |
    | Rechtliches (Impressum, Einwilligung) | Issue mit Label `recht` |
-4. Issues anlegen mit `gh issue create --title "[Wunsch] ..." --label <label> --body-file -`. Text: was gewünscht
+4. Issues anlegen mit `python3 -m parlier issues neu --titel "[Wunsch] ..." --label <label> --text "..."`. Text: was gewünscht
    ist, von wem, Datum, Dateiname aus dem Eingang. Keine personenbezogenen Daten, die nicht nötig sind.
 5. Vale eine Tabelle zeigen: Datei, was daraus wurde (Issue-Nummer), was unklar blieb.
 6. Verarbeitete Dateien nach `eingang/erledigt/` verschieben (bleiben lokal, nicht im Repo).

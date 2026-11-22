@@ -55,6 +55,53 @@ class Basis(unittest.TestCase):
             self.assertTrue(k["label"])
 
 
+class Befehlszeile(unittest.TestCase):
+    def test_label_entfernen_mit_minus(self):
+        from parlier.cli import _parser
+
+        for argv, erwartet in ((["issue", "9", "label", "+in-review", "-in-arbeit"], ["+in-review", "-in-arbeit"]),
+                               (["issue", "9", "label", "-in-arbeit"], ["-in-arbeit"])):
+            self.assertEqual(_parser().parse_args(argv).werte, erwartet)
+
+
+class IssueNeu(unittest.TestCase):
+    def test_neu_ueber_rest(self):
+        from unittest import mock
+
+        aufrufe = []
+
+        def falsches_gh(*argumente, eingabe=None, als_json=False):
+            aufrufe.append((argumente, eingabe))
+            return "14"
+
+        with ImOrdner(), mock.patch.object(issues, "gh", falsches_gh):
+            nummer = issues.neu("Phase 1: Interview", ["prd", "mensch"], "Fragen kommen als Kommentare.")
+        self.assertEqual(nummer, 14)
+        argumente, eingabe = aufrufe[0]
+        self.assertEqual(argumente[0], "api")
+        self.assertIn("repos/DexBrox/web-bauhuette/issues", argumente)
+        self.assertIn("title=Phase 1: Interview", argumente)
+        self.assertIn("labels[]=prd", argumente)
+        self.assertIn("labels[]=mensch", argumente)
+        self.assertEqual(eingabe, "Fragen kommen als Kommentare.")
+
+    def test_labels_und_kommentar_ueber_rest(self):
+        from unittest import mock
+
+        aufrufe = []
+
+        def falsches_gh(*argumente, eingabe=None, als_json=False):
+            aufrufe.append(argumente)
+            return ""
+
+        with ImOrdner(), mock.patch.object(issues, "gh", falsches_gh):
+            issues.labels_aendern(9, hinzu=["in-review"], weg=["in-arbeit"])
+            issues.kommentieren(9, "Frage 1")
+        self.assertIn(("api", "-X", "POST", "repos/DexBrox/web-bauhuette/issues/9/labels", "-f", "labels[]=in-review"), aufrufe)
+        self.assertIn(("api", "-X", "DELETE", "repos/DexBrox/web-bauhuette/issues/9/labels/in-arbeit"), aufrufe)
+        self.assertEqual(aufrufe[-1][:2], ("api", "repos/DexBrox/web-bauhuette/issues/9/comments"))
+
+
 class Issues(unittest.TestCase):
     ENTWURF = {
         "prd": "docs/projekt/prd.md",
@@ -250,6 +297,35 @@ class Zweige(unittest.TestCase):
             zweig.commit("Seite angelegt")
             self.assertEqual(basis.git("log", "-1", "--format=%s"), "Seite angelegt (#12)")
             self.assertEqual(zweig.issue_aus_zweig(), 12)
+
+    def test_zweig_ohne_issue_abgelehnt(self):
+        with ImOrdner(git_init=True):
+            with self.assertRaises(basis.Abbruch):
+                zweig.zweig_anlegen(None, "Nur ein Titel")
+
+    def test_commit_ohne_issue_abgelehnt(self):
+        with ImOrdner(git_init=True) as ort:
+            basis.git("switch", "-q", "-c", "feature/ohne-nummer")
+            (ort / "c.txt").write_text("x")
+            with self.assertRaises(basis.Abbruch):
+                zweig.commit("Irgendwas")
+
+    def test_pr_weicht_auf_rest_aus(self):
+        from unittest import mock
+
+        aufrufe = []
+
+        def falsches_gh(*argumente, eingabe=None, als_json=False):
+            aufrufe.append(argumente)
+            if argumente[:2] == ("pr", "create"):
+                raise basis.Abbruch("gh pr create fehlgeschlagen: HTTP 403: GitHub GraphQL is not available")
+            return "https://github.com/DexBrox/web-bauhuette/pull/5"
+
+        with ImOrdner(), mock.patch.object(zweig, "gh", falsches_gh):
+            url = zweig.pr_anlegen("develop", "feature/9-x", "Titel", "Text", entwurf=False)
+        self.assertEqual(url, "https://github.com/DexBrox/web-bauhuette/pull/5")
+        self.assertEqual(aufrufe[1][0], "api")
+        self.assertIn("repos/DexBrox/web-bauhuette/pulls", aufrufe[1])
 
     def test_issue_nummer_in_erster_zeile(self):
         with ImOrdner(git_init=True) as ort:

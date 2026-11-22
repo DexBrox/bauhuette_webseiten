@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .basis import Abbruch, gh, hat_programm, melde, warne, wurzel
+from .basis import Abbruch, gh, hat_programm, konfig, melde, warne, wurzel
 
 SPERR_LABELS = {"in-arbeit", "in-review", "braucht-hilfe", "mensch", "fertig"}
 RE_BLOCKIERT = re.compile(r"^Blockiert von:\s*(.+)$", re.MULTILINE | re.IGNORECASE)
@@ -216,20 +216,39 @@ def naechstes(label: str = "bereit") -> dict[str, Any] | None:
     return None
 
 
+def neu(titel: str, labels: list[str] = (), text: str = "") -> int:
+    """Legt ein einzelnes Issue über die REST-API an (klappt auch, wo GraphQL gesperrt ist)."""
+    argumente = ["api", f"repos/{konfig()['projekt']['repo']}/issues", "-f", f"title={titel}"]
+    for label in labels:
+        argumente += ["-f", f"labels[]={label}"]
+    argumente += ["-F", "body=@-", "--jq", ".number"]
+    nummer = int(gh(*argumente, eingabe=text))
+    melde(f"Issue #{nummer}: {titel}")
+    return nummer
+
+
 def labels_aendern(nummer: int, hinzu: list[str] = (), weg: list[str] = ()) -> None:
-    argumente = ["issue", "edit", str(nummer)]
-    for l in hinzu:
-        argumente += ["--add-label", l]
+    """Über die REST-API, damit es auch klappt, wo GraphQL gesperrt ist."""
+    from urllib.parse import quote
+
+    pfad = f"repos/{konfig()['projekt']['repo']}/issues/{nummer}/labels"
+    if hinzu:
+        argumente = ["api", "-X", "POST", pfad]
+        for l in hinzu:
+            argumente += ["-f", f"labels[]={l}"]
+        try:
+            gh(*argumente)
+        except Abbruch as fehler:
+            warne(f"Labels an #{nummer} nicht gesetzt: {fehler}")
     for l in weg:
-        argumente += ["--remove-label", l]
-    try:
-        gh(*argumente)
-    except Abbruch as fehler:
-        warne(f"Labels an #{nummer} nicht geändert: {fehler}")
+        try:
+            gh("api", "-X", "DELETE", f"{pfad}/{quote(l)}")
+        except Abbruch:
+            pass  # Label war nicht gesetzt
 
 
 def kommentieren(nummer: int, text: str) -> None:
     try:
-        gh("issue", "comment", str(nummer), "--body-file", "-", eingabe=text)
+        gh("api", f"repos/{konfig()['projekt']['repo']}/issues/{nummer}/comments", "-F", "body=@-", "--silent", eingabe=text)
     except Abbruch as fehler:
         warne(f"Kommentar an #{nummer} fehlgeschlagen: {fehler}")

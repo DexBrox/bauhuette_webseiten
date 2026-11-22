@@ -7,6 +7,8 @@ description: Phase 3 der Bauhütte. Baumeister entwirft Architektur, Datenmodell
 
 Voraussetzung: `docs/projekt/prd.md` mit `status: freigegeben`.
 
+0. Phasen-Issue: `python3 -m parlier issues neu --titel "Phase 3: Architektur" --label technik --zweig`, falls keins offen ist.
+   Befunde des Advocatus Diaboli und Vales Entscheidungen als Kommentare dort festhalten.
 1. **Entwurf:** Subagent `baumeister` beauftragen. Er liest PRD, Glossar, `bauhuette.toml` und schreibt
    `docs/technik/architektur.md` (Vorlage `architektur-vorlage.md`), ADRs (Vorlage `adr-vorlage.md`) und die
    Schemas in `packages/shared/src/`.

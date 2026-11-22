@@ -14,6 +14,7 @@
       "Bash(python3 -m parlier doku-check:*)",
       "Bash(python3 -m parlier wiki:*)",
       "Bash(python3 -m parlier status:*)",
+      "Bash(python3 -m parlier profil:*)",
       "Bash(pnpm lint:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(pnpm test:*)",

@@ -7,6 +7,7 @@ description: Phase 2 der Bauhütte. Macht aus Interview und Anforderung ein PRD 
 
 Voraussetzung: `docs/projekt/anf.md` mit `status: freigegeben`. Sonst zuerst `/interview`.
 
+0. Phasen-Issue: `python3 -m parlier issues neu --titel "Phase 2: PRD" --label prd --zweig`, falls keins offen ist.
 1. `anf.md` und `docs/technik/glossar.md` lesen. Kein neues Interview: nur nachfragen, was für das PRD fehlt.
 2. Vorlage `.claude/skills/prd/vorlage.md` nach `docs/projekt/prd.md` übernehmen und füllen.
    - User Stories als nummerierte Liste ("Als ... möchte ich ..., damit ..."), jede mit prüfbaren Akzeptanzkriterien.
