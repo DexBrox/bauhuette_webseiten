@@ -10,11 +10,12 @@ Bauen: Quartz wird in der eingestellten Version nach .cache/quartz geholt und ba
 from __future__ import annotations
 
 import os
+import re
 import shutil
 from pathlib import Path
 from urllib.parse import quote
 
-from .basis import Abbruch, frontmatter, git, hat_programm, konfig, lauf, melde, wurzel
+from .basis import Abbruch, frontmatter, git, hat_programm, konfig, kuerzen, lauf, melde, wurzel
 
 ARBEIT = ".cache/wiki-inhalt"
 QUARTZ = ".cache/quartz"
@@ -110,7 +111,11 @@ def bauen(zweig: str | None = None) -> Path:
     ziel = wurzel() / k["wiki"]["ziel"]
     shutil.rmtree(ziel, ignore_errors=True)
     lauf(["npx", "quartz", "plugin", "install", "--from-config"], ordner=quartz)
-    lauf(["npx", "quartz", "build", "-d", str(inhalt), "-o", str(ziel)], ordner=quartz)
-    seiten = len(list(ziel.rglob("*.html")))
-    melde(f"Wiki gebaut: {seiten} HTML-Seiten in {ziel.relative_to(wurzel())}")
+    ergebnis = lauf(["npx", "quartz", "build", "-d", str(inhalt), "-o", str(ziel)], ordner=quartz)
+    ausgabe = re.sub(r"\x1b\[[0-9;]*m", "", ergebnis.stdout + ergebnis.stderr)
+    erwartet = len(list(inhalt.rglob("*.md")))
+    seiten = len(list(ziel.rglob("*.html"))) if ziel.exists() else 0
+    if seiten < erwartet:
+        raise Abbruch(f"Wiki unvollständig: {seiten} HTML-Seiten für {erwartet} Markdown-Seiten. Quartz meldet:\n{kuerzen(ausgabe, 40)}")
+    melde(f"Wiki gebaut: {seiten} HTML-Seiten aus {erwartet} Markdown-Seiten in {ziel.relative_to(wurzel())}")
     return ziel
