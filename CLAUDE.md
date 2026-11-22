@@ -63,4 +63,5 @@ Jeder Subagent bekommt seinen Kontext über `python3 -m parlier kontext <nr>`, n
 
 `apps/web` Astro-Webseite · `apps/api` Hono-API (nur Profil fullstack) · `packages/shared` zod-Vertrag ·
 `docs/projekt` Anforderung, PRD, Issues · `docs/technik` Architektur, ADRs, Glossar, Betrieb ·
-`docs/hilfe` Wiki (wird zu `/hilfe/`) · `parlier/` Werkzeug · `bauhuette.toml` Einstellungen
+`docs/hilfe` Wiki (wird zu `/hilfe/`) · `parlier/` Werkzeug · `bauhuette.toml` Einstellungen.
+Rollen und Abläufe als Diagramme: `docs/technik/zusammenarbeit.md`.

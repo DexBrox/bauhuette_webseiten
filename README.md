@@ -24,6 +24,28 @@ damit Claude dafür keine Tokens braucht.
 
 ## Ablauf
 
+```mermaid
+flowchart TB
+  E[0 Eingang] --> I[1 Interview]
+  I --> P[2 PRD]
+  P --> G1{Vale gibt frei}
+  G1 -->|nein| P
+  G1 -->|ja| A[3 Architektur]
+  A --> AD[Advocatus Diaboli greift an]
+  AD --> G2{Vale gibt frei}
+  G2 -->|nein| A
+  G2 -->|ja| Z[4 Zerlegung in Issues]
+  Z --> U[5 Umsetzung je Issue]
+  U --> R[6 Review]
+  R --> M{Vale führt nach develop zusammen}
+  M -->|weitere Issues| U
+  M -->|genug für ein Release| L[7 Release nach main]
+  K[Kurzweg: kleiner Fix] --> R
+```
+
+Jede Phase und jede Änderung läuft über ein Issue. Rollen, Ablauf eines Issues, Git-Fluss und Labels als
+Diagramme: [docs/technik/zusammenarbeit.md](docs/technik/zusammenarbeit.md).
+
 | Phase | Befehl in Claude Code | Wer gibt frei |
 |---|---|---|
 | 0 Eingang | `/eingang` | |
