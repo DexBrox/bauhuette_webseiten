@@ -5,9 +5,7 @@ erstellt: 2026-11-22
 tags: [hilfe]
 ---
 
-Willkommen in der Hilfe zur Webseite. Hier steht alles, was du zum Pflegen und Mitmachen brauchst.
-Oben links findest du die Suche, rechts das Inhaltsverzeichnis jeder Seite und die Liste
-"Links auf diese Seite".
+Willkommen in der Hilfe zur Webseite. Hier steht alles, was du zum Pflegen und Mitmachen brauchst. Oben links findest du die Suche, rechts das Inhaltsverzeichnis jeder Seite und die Liste "Links auf diese Seite".
 
 > [!infobox] Auf einen Blick
 > - **Wünsche und Fehler:** [[wunsch-melden|Wunsch melden]]

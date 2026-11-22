@@ -20,3 +20,4 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 ### Behoben
 - Testseiten werden wieder veröffentlicht: Bauen und Veröffentlichen laufen in zwei Jobs. (#2)
 - parlier commit setzt die Issue-Nummer in die erste Zeile statt ans Ende mehrzeiliger Nachrichten. (#2)
+- Hilfe-Wiki: Absätze brechen nicht mehr mitten im Satz um, toter Link auf die Kategorie Redaktion entfernt. (#2)
