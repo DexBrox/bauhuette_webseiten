@@ -5,6 +5,13 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 
 ## [Unreleased]
 
+### Hinzugefügt
+- `parlier profil statisch|fullstack` legt das Profil in Phase 3 fest, statisch entfernt `apps/api`.
+
+### Geändert
+- `parlier einrichten` lässt das Profil offen und beginnt ein frisches CHANGELOG für das neue Projekt.
+- Namensschema für Projekte: `web-<projekt>`, die Vorlage heißt jetzt `web-bauhuette`.
+
 ## [0.1.0] - 2026-11-22
 
 ### Hinzugefügt
