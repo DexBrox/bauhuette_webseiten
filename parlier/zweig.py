@@ -83,7 +83,7 @@ def commit(nachricht: str, issue: int | None = None) -> str | None:
     git("add", "-A")
     git("commit", "-q", "-m", nachricht)
     kurz = git("rev-parse", "--short", "HEAD")
-    melde(f"Commit {kurz} auf {zweig}: {nachricht}")
+    melde(f"Commit {kurz} auf {zweig}: {nachricht.splitlines()[0]}")
     return kurz
 
 
