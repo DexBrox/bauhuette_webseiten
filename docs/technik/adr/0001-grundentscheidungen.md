@@ -3,7 +3,7 @@ titel: "ADR 0001: Grundentscheidungen der Vorlage"
 typ: adr
 erstellt: 2026-11-22
 tags: [technik, adr]
-status: entwurf
+status: freigegeben
 ---
 
 # ADR 0001: Grundentscheidungen der Vorlage
@@ -39,7 +39,8 @@ mit Neon-Postgres nur bei Bedarf, Quartz für das Hilfe-Wiki, Python-Werkzeug `p
 - Inhalte, Redaktion und API teilen dieselben Schemas, Fehler fallen beim Bauen auf.
 
 ## Gegenrede
-Offen: Astro ist eine Abweichung von der ursprünglich besprochenen React-Variante. Freigabe durch Vale steht aus.
+Astro weicht von der ursprünglich besprochenen React-Variante ab. Vale hat Astro am 22.11.2026 freigegeben,
+weil fertiges HTML pro Seite für Suchmaschinen und SFTP-Server besser passt.
 
 ## Verbunden
 - [[zusammenarbeit]]
