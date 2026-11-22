@@ -1,0 +1,23 @@
+{
+  "name": "web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "typecheck": "astro check",
+    "e2e": "playwright test",
+    "e2e:bilder": "playwright test --grep @bild --update-snapshots"
+  },
+  "dependencies": {
+    "@bauhuette/shared": "workspace:*",
+    "astro": "7.4.13"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "typescript": "6.0.3"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bauhuette/shared": "workspace:*",
+    "@neondatabase/serverless": "1.2.1",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.20"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.17",
+    "drizzle-kit": "0.31.11",
+    "typescript": "6.0.3",
+    "vitest": "5.1.1",
+    "wrangler": "4.166.0"
+  }
+}

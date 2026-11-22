@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const siteName = "Bauhütte Webseiten";
+const menu = [
+  { label: "Start", target: "" },
+  { label: "Hilfe", target: "hilfe/" },
+];
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === siteName ? title : `${title} | ${siteName}`}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={withBase("favicon.svg")} type="image/svg+xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+  </head>
+  <body>
+    <a class="sprunglink" href="#inhalt">Zum Inhalt springen</a>
+    <header class="kopf">
+      <a class="marke" href={withBase()}>{siteName}</a>
+      <nav aria-label="Hauptmenü">
+        <ul>
+          {menu.map((item) => <li><a href={withBase(item.target)}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+    </header>
+    <main id="inhalt" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="fuss">
+      <a href={withBase("impressum/")}>Impressum</a>
+      <a href={withBase("datenschutz/")}>Datenschutz</a>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+name: "Release: Notiz aus dem CHANGELOG"
+
+# Ein Tag vX.Y.Z (gesetzt von python3 -m parlier release X.Y.Z --abschliessen) legt das
+# GitHub-Release an. Titel ist die Nachricht des Tags, Text der Abschnitt aus CHANGELOG.md.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          titel=$(git tag -l --format='%(contents:subject)' "$GITHUB_REF_NAME")
+          python3 -m parlier release-notiz "$version" notiz.md
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file notiz.md
+          else
+            gh release create "$GITHUB_REF_NAME" --title "${titel:-$version}" --notes-file notiz.md --verify-tag
+          fi

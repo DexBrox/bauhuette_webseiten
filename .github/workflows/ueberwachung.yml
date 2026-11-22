@@ -1,0 +1,29 @@
+name: "Überwachung: Live-Seite"
+
+# Alle 6 Stunden: Seiten aus bauhuette.toml erreichbar, Zertifikat noch mindestens 14 Tage gültig.
+# Bei einer Störung ein Issue (Label betrieb) und damit eine Mail. Das Issue schließt sich, sobald alles geht.
+# Ohne domain in bauhuette.toml passiert nichts.
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Live-Seite prüfen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if python3 -c "import tomllib,sys; sys.exit(0 if tomllib.load(open('bauhuette.toml','rb'))['projekt']['domain'] else 1)"; then
+            python3 -m parlier ueberwachen --issue
+          else
+            echo "Keine domain in bauhuette.toml, nichts zu prüfen."
+          fi

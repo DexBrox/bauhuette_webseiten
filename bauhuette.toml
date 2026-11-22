@@ -1,0 +1,131 @@
+# Einstellungen der Bauhütte. Gelesen von parlier (python3 -m parlier).
+# Einmal pro Projekt anpassen, am einfachsten mit:
+#   python3 -m parlier einrichten --name "Mein Projekt" --repo DexBrox/mein-projekt --profil statisch --domain beispiel.de
+
+[projekt]
+name = "Bauhütte Webseiten"
+repo = "DexBrox/bauhuette_webseiten"
+# statisch: nur Webseite (SFTP). fullstack: zusätzlich API auf Cloudflare Workers mit Neon-Postgres.
+profil = "statisch"
+# Live-Domain ohne https://, z. B. "kulturland-hohenlohe.de". Leer, solange es keine gibt.
+domain = ""
+
+[zweige]
+haupt = "main"      # was live ist
+sammel = "develop"  # Sammelstelle bis zum nächsten Release
+feature = "feature/"
+fix = "fix/"
+
+[pruefen]
+# schnell: läuft vor jedem Abschluss einer Claude-Antwort (Hook) und in Ralph nach jeder Runde
+schnell = ["pnpm lint", "pnpm typecheck", "pnpm test"]
+# voll: vor jedem Pull Request und in der CI
+voll = ["pnpm lint", "pnpm typecheck", "pnpm test", "pnpm build"]
+
+[ralph]
+befehl = "claude"
+modell = "sonnet"
+max_issues = 5
+max_runden = 80
+zeitlimit_min = 45
+label = "bereit"
+
+[modelle]
+# Wird in den Agenten-Dateien verwendet, hier nur zur Übersicht.
+architektur = "opus"
+gegenrede = "opus"
+umsetzung = "sonnet"
+routine = "haiku"
+
+[wiki]
+quelle = "docs/hilfe"
+ziel = "_site/hilfe"
+quartz = "v5.2.0"
+konfig = "wiki/quartz.config.yaml"
+stil = "wiki/custom.scss"
+
+[ueberwachung]
+# Pfade, die auf der Live-Seite erreichbar sein müssen
+seiten = ["/", "/impressum/", "/datenschutz/", "/hilfe/"]
+zertifikat_tage = 14
+
+# Labels, die parlier labels auf GitHub anlegt oder aktualisiert
+[[label]]
+name = "wunsch"
+farbe = "1d76db"
+text = "Änderungswunsch"
+
+[[label]]
+name = "fehler"
+farbe = "d73a4a"
+text = "Etwas funktioniert nicht"
+
+[[label]]
+name = "inhalt"
+farbe = "c5def5"
+text = "Geht in der Redaktion, kein Code nötig"
+
+[[label]]
+name = "technik"
+farbe = "5319e7"
+text = "Code, Workflow, Redaktion"
+
+[[label]]
+name = "design"
+farbe = "f9d0c4"
+text = "Aussehen, Layout"
+
+[[label]]
+name = "recht"
+farbe = "b60205"
+text = "Impressum, Datenschutz, Bildrechte, Einwilligungen"
+
+[[label]]
+name = "betrieb"
+farbe = "0e8a16"
+text = "Server, Domain, Zugänge"
+
+[[label]]
+name = "prd"
+farbe = "000000"
+text = "Sammel-Issue zu einem PRD"
+
+[[label]]
+name = "bereit"
+farbe = "0e8a16"
+text = "Fertig beschrieben, ein Agent darf es umsetzen (AFK)"
+
+[[label]]
+name = "mensch"
+farbe = "fbca04"
+text = "Braucht eine Entscheidung oder Handarbeit von Vale (HITL)"
+
+[[label]]
+name = "in-arbeit"
+farbe = "fef2c0"
+text = "Wird gerade umgesetzt"
+
+[[label]]
+name = "in-review"
+farbe = "bfd4f2"
+text = "Pull Request offen"
+
+[[label]]
+name = "fertig"
+farbe = "c2e0c6"
+text = "Auf develop, geht mit dem nächsten Release live"
+
+[[label]]
+name = "braucht-hilfe"
+farbe = "e99695"
+text = "Agent ist steckengeblieben"
+
+[[label]]
+name = "keine-doku"
+farbe = "ededed"
+text = "Pull Request braucht ausnahmsweise keinen Doku-Eintrag"
+
+[[label]]
+name = "claude"
+farbe = "d4c5f9"
+text = "Claude soll das Issue sichten (GitHub Action)"

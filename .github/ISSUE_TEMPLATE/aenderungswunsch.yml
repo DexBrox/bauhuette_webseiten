@@ -1,0 +1,37 @@
+name: Änderungswunsch
+description: Etwas auf der Webseite soll anders werden (Text, Bild, Aufbau, neue Funktion).
+title: "[Wunsch] "
+labels: ["wunsch"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Texte, Bilder und Termine lassen sich meist direkt in der Redaktion ändern (/admin/).
+        Dieses Formular ist für alles, was dort nicht geht.
+  - type: input
+    id: seite
+    attributes:
+      label: Welche Seite?
+      placeholder: z. B. Startseite, Termine, alle Seiten
+    validations:
+      required: true
+  - type: textarea
+    id: was
+    attributes:
+      label: Was soll sich ändern?
+      description: So konkret wie möglich. Screenshots einfach hineinziehen.
+    validations:
+      required: true
+  - type: textarea
+    id: warum
+    attributes:
+      label: Warum? (freiwillig)
+  - type: input
+    id: bis
+    attributes:
+      label: Bis wann? (freiwillig)
+  - type: input
+    id: von
+    attributes:
+      label: Wunsch von
+      placeholder: z. B. Name, per Mail vom 10.10.2026

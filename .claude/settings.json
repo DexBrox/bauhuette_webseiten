@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m parlier zweig:*)",
+      "Bash(python3 -m parlier commit:*)",
+      "Bash(python3 -m parlier push:*)",
+      "Bash(python3 -m parlier pr:*)",
+      "Bash(python3 -m parlier aktualisieren:*)",
+      "Bash(python3 -m parlier kontext:*)",
+      "Bash(python3 -m parlier issues:*)",
+      "Bash(python3 -m parlier issue:*)",
+      "Bash(python3 -m parlier pruefen:*)",
+      "Bash(python3 -m parlier doku-check:*)",
+      "Bash(python3 -m parlier wiki:*)",
+      "Bash(python3 -m parlier status:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm --filter:*)",
+      "Bash(pnpm audit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(gh pr diff:*)"
+    ],
+    "deny": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git tag:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh release:*)",
+      "Bash(python3 -m parlier release:*)",
+      "Bash(python3 -m parlier einrichten:*)",
+      "Bash(python3 -m parlier ralph:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./.dev.vars)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "cd \"$CLAUDE_PROJECT_DIR\" && python3 -m parlier hook start" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && python3 -m parlier hook formatieren"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && python3 -m parlier hook abschluss",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

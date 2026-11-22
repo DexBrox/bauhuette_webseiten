@@ -1,0 +1,23 @@
+# Build und Abhängigkeiten
+node_modules/
+_site/
+dist/
+.astro/
+.wrangler/
+.cache/
+playwright-report/
+test-results/
+__pycache__/
+*.pyc
+
+# Arbeitsstände von parlier (Protokolle, Merker)
+.bauhuette/
+
+# Eingang für Material vom Kunden oder Verein (Mails, Word, Screenshots): bleibt lokal
+eingang/*
+!eingang/LIESMICH.md
+
+# Geheimnisse
+.env
+.env.*
+.dev.vars

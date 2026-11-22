@@ -1,0 +1,21 @@
+---
+import { parsePage } from "@bauhuette/shared";
+import data from "../content/home.json";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../lib/paths";
+
+const page = parsePage(data, "content/home.json");
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <h1>{page.title}</h1>
+  {
+    page.sections.map((section) => (
+      <section id={section.id}>
+        <h2>{section.heading}</h2>
+        <p>{section.text}</p>
+        {section.image && <img src={withBase(section.image.src)} alt={section.image.alt} loading="lazy" />}
+      </section>
+    ))
+  }
+</BaseLayout>

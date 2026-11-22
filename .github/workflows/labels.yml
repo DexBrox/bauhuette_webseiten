@@ -1,0 +1,22 @@
+name: "Labels abgleichen"
+
+# Legt die Labels aus bauhuette.toml an, wenn sich die Datei auf develop ändert, oder von Hand.
+
+on:
+  push:
+    branches: [develop]
+    paths: [bauhuette.toml]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Labels anlegen oder aktualisieren
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -m parlier labels

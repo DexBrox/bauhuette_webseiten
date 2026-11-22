@@ -1,0 +1,109 @@
+{
+  "prd": "docs/projekt/prd.md",
+  "eltern": {
+    "titel": "Baustein Redaktion (aus Kulturland Hohenlohe verallgemeinert)",
+    "text": "Die Redaktion von Kulturland Hohenlohe (admin/index.html) wird zum wiederverwendbaren Baustein der Vorlage: Felder aus den zod-Schemas, Vorschau links, Felder rechts, Veröffentlichen als Commit. Dazu die Verbesserungen aus der Planung vom 22.11.2026."
+  },
+  "issues": [
+    {
+      "id": "A",
+      "titel": "Redaktion: Grundgerüst mit Feldern aus den Schemas",
+      "text": "Eine Seite /admin/ zeigt links die echte Seite und rechts die Felder der Seite. Die Felder entstehen aus den zod-Schemas in packages/shared (Text, langer Text, Bild mit Beschreibung, Liste). Ein Klick in der Vorschau öffnet das passende Feld. Veröffentlichen schreibt die JSON-Datei per GitHub-API als Commit nach main. Vorbild ist admin/index.html aus kulturland_hohenlohe.",
+      "akzeptanz": [
+        "Jedes Feld aus PageSchema erscheint mit passendem Eingabeelement",
+        "Änderungen sind sofort in der Vorschau sichtbar",
+        "Ungültige Eingaben zeigt die Redaktion mit der Meldung aus dem Schema, Veröffentlichen ist dann gesperrt",
+        "Veröffentlichen erzeugt genau einen Commit mit Seitennamen in der Nachricht",
+        "Hilfe-Seite docs/hilfe/redaktion.md beschreibt den Ablauf"
+      ],
+      "dateien": ["apps/web/src/pages/admin/index.astro", "packages/shared/src/content.ts"],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": []
+    },
+    {
+      "id": "B1",
+      "titel": "Redaktion: Anmelden per Knopf statt Zugriffstoken",
+      "text": "Statt einen klassischen Token mit vollem repo-Recht einzufügen, meldet man sich mit 'Mit GitHub anmelden' an. Ein kleiner Auth-Worker auf Cloudflare tauscht den OAuth-Code gegen ein Token. Weniger Einrichtung für Pflegende, kein langlebiger Generalschlüssel im Browser.",
+      "akzeptanz": [
+        "Knopf 'Mit GitHub anmelden' führt durch den OAuth-Ablauf und zurück in die Redaktion",
+        "Das Token wird nur für dieses Repo genutzt und beim Abmelden gelöscht",
+        "Ohne eingerichtete OAuth-App erklärt die Redaktion, was fehlt"
+      ],
+      "dateien": ["apps/auth/"],
+      "labels": ["technik", "betrieb"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    },
+    {
+      "id": "B2",
+      "titel": "OAuth-App auf GitHub anlegen und Worker-Secrets setzen",
+      "text": "Vale legt die GitHub OAuth-App an (Callback auf den Auth-Worker) und trägt Client-ID und Secret als Worker-Secrets ein. Anleitung kommt aus B1.",
+      "akzeptanz": ["OAuth-App existiert", "Anmelden funktioniert auf der Testseite"],
+      "labels": ["betrieb"],
+      "afk": false,
+      "abhaengig_von": ["B1"]
+    },
+    {
+      "id": "C",
+      "titel": "Redaktion: Entwurf speichern und zur Freigabe geben",
+      "text": "Neben Veröffentlichen gibt es 'Zur Freigabe'. Das speichert auf einen Zweig redaktion/<datum>-<seite>, die Vorschau baut eine Testseite, eine zweite Person kann freigeben. Für Seiten mit nur einer pflegenden Person abschaltbar.",
+      "akzeptanz": [
+        "Zur Freigabe legt einen Zweig und einen Pull Request mit Link zur Testseite an",
+        "Freigeben führt den Pull Request zusammen und die Änderung geht live",
+        "In bauhuette.toml lässt sich die Freigabe abschalten"
+      ],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    },
+    {
+      "id": "D",
+      "titel": "Redaktion: Verlauf je Seite mit Wiederherstellen",
+      "text": "Je Seite zeigt die Redaktion die letzten Änderungen mit Name und Datum. Ein Klick stellt einen älteren Stand als neuen Commit wieder her.",
+      "akzeptanz": [
+        "Die letzten zehn Änderungen je Seite mit Name, Datum und betroffenen Feldern",
+        "Wiederherstellen zeigt vorher den Unterschied und erzeugt einen neuen Commit"
+      ],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    },
+    {
+      "id": "E",
+      "titel": "Redaktion: Knopf 'Wunsch melden' legt ein Issue an",
+      "text": "Wer etwas nicht selbst ändern kann, meldet es direkt aus der Redaktion. Das Formular entspricht der Issue-Vorlage Änderungswunsch, die aktuelle Seite ist vorausgefüllt.",
+      "akzeptanz": [
+        "Formular mit Seite, Was, Warum, Bis wann",
+        "Absenden legt ein Issue mit Label wunsch an und zeigt den Link"
+      ],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    },
+    {
+      "id": "F",
+      "titel": "Redaktion auf Testseiten entschärfen",
+      "text": "Auf Testseiten speichert die Redaktion bei Kulturland nach main, also live. In der Vorlage schreibt sie dort in den Zweig der Testseite oder ist schreibgeschützt.",
+      "akzeptanz": [
+        "Auf einer Testseite kann nichts nach main gespeichert werden",
+        "Ein Hinweis sagt, wo man wirklich bearbeitet"
+      ],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    },
+    {
+      "id": "G",
+      "titel": "Redaktion: Hilfe aus dem Wiki direkt am Feld",
+      "text": "Neben Feldern und Bereichen ein Fragezeichen, das die passende Wiki-Seite aus /hilfe/ öffnet. Die Zuordnung steht im Schema (describe).",
+      "akzeptanz": [
+        "Jeder Bereich der Redaktion verlinkt seine Wiki-Seite",
+        "Fehlt eine Wiki-Seite, schlägt die Prüfung im Build an"
+      ],
+      "labels": ["technik"],
+      "afk": true,
+      "abhaengig_von": ["A"]
+    }
+  ]
+}

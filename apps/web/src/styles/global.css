@@ -1,0 +1,73 @@
+/* Grundgerüst. Das eigentliche Design entsteht im Projekt (Phase 3 und Issues mit Label design). */
+:root {
+  --text: #1f2421;
+  --hintergrund: #fbfaf7;
+  --akzent: #3d5a2a;
+  --fokus: #b35c00;
+  --breite: 68rem;
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--hintergrund);
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--akzent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+}
+
+.sprunglink {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--text);
+  color: #fff;
+  padding: 0.5rem 1rem;
+}
+
+.sprunglink:focus {
+  left: 0.5rem;
+}
+
+.kopf,
+.fuss,
+main {
+  max-width: var(--breite);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.kopf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kopf ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.marke {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.fuss {
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid #e3e1da;
+}

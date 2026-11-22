@@ -1,0 +1,67 @@
+name: "Prüfung: Pull Request"
+
+# Baut und prüft jeden Pull Request (auch Dependabot), ohne etwas zu veröffentlichen.
+# Ein roter Haken heißt: nicht zusammenführen.
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pruefung-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: pnpm einrichten
+        uses: pnpm/action-setup@v4
+
+      - name: Node einrichten
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Abhängigkeiten installieren
+        run: pnpm install --frozen-lockfile
+
+      - name: parlier testen
+        run: python3 -m unittest discover -s tests
+
+      - name: Lint, Typen, Tests, Build
+        run: python3 -m parlier pruefen voll
+
+      - name: Doku-Pflicht (CHANGELOG oder docs/)
+        env:
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels) }}
+        run: python3 -m parlier doku-check --basis "origin/${{ github.base_ref }}"
+
+      - name: Hilfe-Wiki bauen
+        run: python3 -m parlier wiki
+
+      - name: Links prüfen
+        run: python3 -m parlier links
+
+      - name: Browser für Playwright installieren
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
+      - name: Seiten im Browser prüfen (Playwright, axe)
+        run: pnpm --filter web e2e
+
+      - name: Bericht sichern
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-bericht
+          path: apps/web/playwright-report
+          retention-days: 7

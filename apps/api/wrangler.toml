@@ -1,0 +1,10 @@
+# Cloudflare Worker für die API (nur Profil fullstack).
+# Secret setzen: pnpm --filter api exec wrangler secret put DATABASE_URL  (Neon, Verbindung mit -pooler)
+name = "bauhuette-api"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Allowed CORS origin, z. B. "https://beispiel.de"
+ALLOWED_ORIGIN = "http://localhost:4321"
