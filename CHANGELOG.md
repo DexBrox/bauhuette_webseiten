@@ -5,6 +5,8 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-22
+
 ### Hinzugefügt
 - Bauhütte als Vorlage: Hüttenordnung, sieben Rollen als Subagenten, elf Skills von Eingang bis Release.
 - Werkzeug parlier (Python): Zweige, Commits, Pull Requests, Issues aus Entwürfen, Kontext für Subagenten,
