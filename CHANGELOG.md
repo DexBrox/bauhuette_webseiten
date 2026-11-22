@@ -6,6 +6,7 @@ Alle nennenswerten Änderungen an diesem Projekt. Format nach
 ## [Unreleased]
 
 ### Hinzugefügt
+- Diagramme zu Phasen (README), Rollen, Ablauf eines Issues, Git-Fluss, Labels und Ralph (`docs/technik/zusammenarbeit.md`).
 - `parlier profil statisch|fullstack` legt das Profil in Phase 3 fest, statisch entfernt `apps/api`.
 
 - `parlier issues neu` legt ein einzelnes Issue an, mit `--zweig` gleich den Arbeitszweig dazu.
