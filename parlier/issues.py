@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .basis import Abbruch, gh, hat_programm, melde, warne, wurzel
+from .basis import Abbruch, gh, hat_programm, konfig, melde, warne, wurzel
 
 SPERR_LABELS = {"in-arbeit", "in-review", "braucht-hilfe", "mensch", "fertig"}
 RE_BLOCKIERT = re.compile(r"^Blockiert von:\s*(.+)$", re.MULTILINE | re.IGNORECASE)
@@ -214,6 +214,17 @@ def naechstes(label: str = "bereit") -> dict[str, Any] | None:
         if all(erledigt(n, zwischenspeicher) for n in blockiert_von(issue.get("body", ""))):
             return issue
     return None
+
+
+def neu(titel: str, labels: list[str] = (), text: str = "") -> int:
+    """Legt ein einzelnes Issue über die REST-API an (klappt auch, wo GraphQL gesperrt ist)."""
+    argumente = ["api", f"repos/{konfig()['projekt']['repo']}/issues", "-f", f"title={titel}"]
+    for label in labels:
+        argumente += ["-f", f"labels[]={label}"]
+    argumente += ["-F", "body=@-", "--jq", ".number"]
+    nummer = int(gh(*argumente, eingabe=text))
+    melde(f"Issue #{nummer}: {titel}")
+    return nummer
 
 
 def labels_aendern(nummer: int, hinzu: list[str] = (), weg: list[str] = ()) -> None:

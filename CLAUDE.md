@@ -39,6 +39,10 @@ Jeder Subagent bekommt seinen Kontext über `python3 -m parlier kontext <nr>`, n
 
 - **Git nur über parlier.** `zweig`, `commit`, `push`, `pr`. Nie direkt auf `main` oder `develop`, kein Merge,
   kein Release. Das ist in `.claude/settings.json` gesperrt und in parlier geprüft.
+- **Ohne Issue keine Arbeit.** Jede Phase und jede Änderung hat ein Issue, auch Interview, PRD und Architektur.
+  Der Zweig trägt die Nummer (`feature/<nr>-...`), Commits und PR verweisen darauf. Fragen, Antworten und
+  Entscheidungen stehen als Kommentare im Issue. Anlegen mit `parlier issues neu --titel "..." --zweig`,
+  parlier lehnt Zweige und Commits ohne Issue ab.
 - **TDD:** erst ein fehlschlagender Test, dann der Code. Tests nie abschwächen, um grün zu werden.
 - **Doku gehört zur Definition of Done:** jedes Issue endet mit CHANGELOG-Eintrag unter `[Unreleased]`
   und, wenn Nutzer etwas merken, einer Wiki-Seite in `docs/hilfe/`. Der Prüf-Workflow kontrolliert das.

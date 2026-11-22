@@ -19,6 +19,8 @@ Arbeit an Issues:
   kontext <nr>                Kontext für einen Subagenten zusammenstellen
   issues anlegen <datei.json> Issues aus einem Zerlegungs-Entwurf anlegen [--trocken]
   issues naechstes            das nächste umsetzbare Issue zeigen
+  issues neu --titel "..." [--label a] [--text "..."] [--zweig] [--fix]
+                              ein Issue anlegen, mit --zweig gleich den Arbeitszweig dazu
   issue <nr> label +a -b      Labels ändern
   issue <nr> kommentar "Text" Kommentar schreiben
   ralph [--max N] [--trocken] Issues AFK abarbeiten (nur im Sandbox-Container)
@@ -70,9 +72,14 @@ def _parser() -> argparse.ArgumentParser:
     k.add_argument("nummer", type=int)
 
     i = s.add_parser("issues")
-    i.add_argument("aktion", choices=["anlegen", "naechstes"])
+    i.add_argument("aktion", choices=["anlegen", "naechstes", "neu"])
     i.add_argument("datei", nargs="?")
     i.add_argument("--trocken", action="store_true")
+    i.add_argument("--titel")
+    i.add_argument("--label", action="append", default=[])
+    i.add_argument("--text", default="")
+    i.add_argument("--zweig", action="store_true")
+    i.add_argument("--fix", action="store_true")
 
     e = s.add_parser("issue")
     e.add_argument("nummer", type=int)
@@ -167,6 +174,14 @@ def ausfuehren(a: argparse.Namespace) -> int:
             if not a.datei:
                 raise Abbruch("Bitte die Entwurfsdatei angeben.")
             issues.anlegen(Path(a.datei), a.trocken)
+        elif a.aktion == "neu":
+            if not a.titel:
+                raise Abbruch("Bitte --titel angeben.")
+            nummer = issues.neu(a.titel, a.label, a.text)
+            if a.zweig:
+                from .zweig import zweig_anlegen
+
+                zweig_anlegen(nummer, a.titel, "fix" if a.fix else "feature")
         else:
             naechstes = issues.naechstes()
             print(f"#{naechstes['number']} {naechstes['title']}" if naechstes else "Kein umsetzbares Issue.")

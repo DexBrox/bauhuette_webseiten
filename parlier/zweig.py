@@ -38,19 +38,20 @@ def hat_remote() -> bool:
     return bool(git("remote", pruefen=False))
 
 
+OHNE_ISSUE = "Ohne Issue keine Arbeit. Erst anlegen: python3 -m parlier issues neu --titel \"...\" --zweig"
+
+
 def zweig_anlegen(nummer: int | None, titel: str | None = None, art: str = "feature") -> str:
+    if nummer is None:
+        raise Abbruch(OHNE_ISSUE)
     k = konfig()["zweige"]
     praefix = k["fix"] if art == "fix" else k["feature"]
-    if titel is None and nummer is not None and hat_programm("gh"):
+    if titel is None and hat_programm("gh"):
         try:
             titel = gh("issue", "view", str(nummer), "--json", "title", "--jq", ".title")
         except Abbruch:
             titel = None
-    teile = [str(nummer)] if nummer is not None else []
-    if titel:
-        teile.append(kurzname(titel))
-    if not teile:
-        raise Abbruch("Bitte eine Issue-Nummer oder einen Titel angeben.")
+    teile = [str(nummer)] + ([kurzname(titel)] if titel else [])
     name = praefix + "-".join(teile)
     basis = k["sammel"]
     if hat_remote():
@@ -78,6 +79,9 @@ def commit(nachricht: str, issue: int | None = None) -> str | None:
         melde("Nichts zu committen.")
         return None
     issue = issue or issue_aus_zweig(zweig)
+    k = konfig()["zweige"]
+    if not issue and zweig.startswith((k["feature"], k["fix"])):
+        raise Abbruch(OHNE_ISSUE)
     betreff, _, rest = nachricht.partition("\n")
     if issue and f"#{issue}" not in betreff:
         nachricht = f"{betreff} (#{issue})" + (f"\n{rest}" if rest else "")
@@ -123,6 +127,23 @@ PR_TEXT = """## Was ändert sich
 """
 
 
+def pr_anlegen(basis: str, zweig: str, titel: str, text: str, entwurf: bool) -> str:
+    """Öffnet den PR mit gh pr create. Ist GraphQL gesperrt (Cloud-Sitzungen), über die REST-API."""
+    argumente = ["pr", "create", "--base", basis, "--head", zweig, "--title", titel, "--body-file", "-"]
+    if entwurf:
+        argumente.append("--draft")
+    try:
+        return gh(*argumente, eingabe=text)
+    except Abbruch as fehler:
+        if "GraphQL" not in str(fehler):
+            raise
+    rest = ["api", f"repos/{konfig()['projekt']['repo']}/pulls", "-f", f"title={titel}", "-f", f"head={zweig}",
+            "-f", f"base={basis}", "-F", "body=@-", "--jq", ".html_url"]
+    if entwurf:
+        rest += ["-F", "draft=true"]
+    return gh(*rest, eingabe=text)
+
+
 def pull_request(
     titel: str | None = None, was: str = "", issue: int | None = None, entwurf: bool = False, basis: str | None = None
 ) -> str:
@@ -134,10 +155,7 @@ def pull_request(
         titel = git("log", "-1", "--format=%s")
     bezug = f"Closes #{issue}" if issue else ""
     text = PR_TEXT.format(was=was or "Siehe Commits.", bezug=bezug)
-    argumente = ["pr", "create", "--base", basis or konfig()["zweige"]["sammel"], "--head", zweig, "--title", titel, "--body-file", "-"]
-    if entwurf:
-        argumente.append("--draft")
-    url = gh(*argumente, eingabe=text)
+    url = pr_anlegen(basis or konfig()["zweige"]["sammel"], zweig, titel, text, entwurf)
     if issue:
         from .issues import labels_aendern
 

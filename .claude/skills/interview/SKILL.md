@@ -10,6 +10,10 @@ Ziel: gemeinsames Verständnis, bevor irgendetwas gebaut wird. Jede offene Entsc
 
 ## Ablauf
 1. `python3 -m parlier status` lesen. Gibt es schon `docs/projekt/anf.md`, daran anknüpfen statt neu anzufangen.
+   Phasen-Issue: gibt es kein offenes "Phase 1: Interview", anlegen mit
+   `python3 -m parlier issues neu --titel "Phase 1: Interview" --label prd --label mensch --zweig`.
+   Nach jeder beantworteten Frage ein kurzer Kommentar ins Issue (`parlier issue <nr> kommentar "..."`):
+   Frage, Antwort, Entscheidung.
 2. Material sichten, das Vale nennt (alte Seite, Dateien in `eingang/`). Was du selbst nachlesen kannst, fragst du nicht.
 3. **Eine Frage pro Nachricht.** Zu jeder Frage deine Empfehlung mit kurzem Grund, damit Vale nur zustimmen muss.
 4. Gehe den Entscheidungsbaum Ast für Ast durch, bis jeder Ast entschieden oder bewusst offen ist:
