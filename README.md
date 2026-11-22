@@ -25,7 +25,7 @@ damit Claude dafür keine Tokens braucht.
 ## Ablauf
 
 ```mermaid
-flowchart LR
+flowchart TB
   E[0 Eingang] --> I[1 Interview]
   I --> P[2 PRD]
   P --> G1{Vale gibt frei}
